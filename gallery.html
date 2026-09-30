@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gallery | Tecla Tum Foundation</title>
+<meta name="description" content="Moments from the field  community gatherings, programme launches, and the households at the centre of the Tecla Tum Foundation's work.">
+<link rel="icon" href="static/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+  /* ============================================
+     GALLERY  masonry + lightbox
+     No rounded corners anywhere.
+     ============================================ */
+
+  .gallery-grid{
+    columns: 3;
+    column-gap: 1rem;
+    margin: 0;
+  }
+
+  .gallery-item{
+    position: relative;
+    display: block;
+    width: 100%;
+    margin: 0 0 1rem;
+    padding: 0;
+    border: 0;
+    background: #e8e3d6;
+    overflow: hidden;
+    cursor: zoom-in;
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .gallery-item img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .6s cubic-bezier(.22,1,.36,1), opacity .4s ease;
+  }
+
+  .gallery-item:hover img{
+    transform: scale(1.04);
+  }
+
+  .gallery-item::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(8,54,24,.45), transparent 55%);
+    opacity: 0;
+    transition: opacity .3s ease;
+    pointer-events: none;
+  }
+
+  .gallery-item:hover::after{ opacity: 1; }
+
+  .gallery-item-caption{
+    position: absolute;
+    left: 1rem; right: 1rem; bottom: .9rem;
+    z-index: 2;
+    color: #fff;
+    font-size: .82rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+    line-height: 1.35;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .3s ease, transform .3s ease;
+    pointer-events: none;
+  }
+
+  .gallery-item:hover .gallery-item-caption{
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ---------- Lightbox ---------- */
+  .lightbox{
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(6, 16, 10, .96);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 4vw, 3rem);
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+
+  .lightbox.is-open{
+    display: flex;
+    opacity: 1;
+  }
+
+  .lightbox-figure{
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .lightbox-img{
+    max-width: 100%;
+    max-height: 82vh;
+    object-fit: contain;
+    display: block;
+    box-shadow: 0 30px 80px rgba(0,0,0,.5);
+  }
+
+  .lightbox-caption{
+    color: rgba(255,255,255,.78);
+    font-size: .9rem;
+    margin: 1.1rem 0 0;
+    text-align: center;
+    max-width: 60ch;
+    line-height: 1.5;
+  }
+
+  .lightbox-btn{
+    position: absolute;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.2);
+    color: #fff;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    font-family: var(--sans);
+    transition: background .2s ease, border-color .2s ease;
+    z-index: 2;
+  }
+
+  .lightbox-btn:hover{
+    background: rgba(255,255,255,.16);
+    border-color: rgba(255,255,255,.45);
+  }
+
+  .lightbox-btn:focus-visible{
+    outline: 2px solid #ffec4e;
+    outline-offset: 3px;
+  }
+
+  .lightbox-close{
+    top: 1.5rem; right: 1.5rem;
+    width: 46px; height: 46px;
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .lightbox-prev,
+  .lightbox-next{
+    top: 50%;
+    transform: translateY(-50%);
+    width: 54px; height: 54px;
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .lightbox-prev{ left: 1.5rem; }
+  .lightbox-next{ right: 1.5rem; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 980px){
+    .gallery-grid{ columns: 2; }
+  }
+
+  @media (max-width: 620px){
+    .gallery-grid{ columns: 1; column-gap: 0; }
+    .gallery-item{ margin-bottom: .75rem; }
+
+    .lightbox-prev,
+    .lightbox-next{ width: 42px; height: 42px; font-size: 1.5rem; }
+    .lightbox-prev{ left: .5rem; }
+    .lightbox-next{ right: .5rem; }
+
+    .lightbox-close{
+      top: .5rem; right: .5rem;
+      width: 40px; height: 40px;
+      font-size: 1.3rem;
+    }
+
+    .lightbox-img{ max-height: 74vh; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .gallery-item img{ transition: none; }
+    .gallery-item:hover img{ transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header" id="siteHeader">
+  <div class="wrap header-inner">
+
+    <a class="brand" href="index.html" aria-label="Tecla Tum Foundation  home">
+      <img class="brand-logo" src="static/images/logo.png" alt="Tecla Tum Foundation logo">
+      <span class="brand-text">
+        <span class="brand-name">Tecla Tum Foundation</span>
+        <span class="brand-sub">Lifting the Vulnerable</span>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="siteNav">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="site-nav" id="siteNav" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="about.html">About Us</a>
+      <a href="programmes.html">Programmes</a>
+      <a href="impact.html">Impact</a>
+      <a href="get-involved.html">Get Involved</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="contact.html">Contact</a>
+      <a class="btn btn--green nav-cta" href="get-involved.html#donate">Donate</a>
+    </nav>
+
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ PAGE HERO ============ -->
+  <section class="page-hero">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="index.html">Home</a><span>/</span><span>Gallery</span>
+      </nav>
+      <h1>The work,<br>in pictures.</h1>
+      <p>Moments from the field  community gatherings, programme launches, and the
+         households at the centre of everything we do. Click any image to view it full size.</p>
+    </div>
+  </section>
+
+  <!-- ============ GALLERY ============ -->
+  <section class="section">
+    <div class="wrap">
+
+      <div class="gallery-grid">
+
+        <figure class="gallery-item" style="aspect-ratio:4/5;">
+          <img src="static/images/gallery-1.jpg" alt="Women farmers gathered at a field school" loading="lazy">
+          <figcaption class="gallery-item-caption">Women farmers at a field school</figcaption>
+        </figure>
+
+        <figure class="gallery-item" style="aspect-ratio:1/1;">
+          <img src="static/images/gallery-2.jpg" alt="Youth sports tournament on a community field" loading="lazy">
+          <figcaption class="gallery-item-caption">Youth sports tournament</figcaption>
+        </figure>
+
+        <figure class="gallery-item" style="aspect-ratio:3/4;">
+          <img src="static/images/gallery-3.jpg" alt="Clean cookstove distribution to a rural household" loading="lazy">
+          <figcaption class="gallery-item-caption">Clean cookstove distribution</figcaption>
+        </figure>
+
+        <figure class="gallery-item" style="aspect-ratio:4/3;">
+          <img src="static/images/gallery-4.jpg" alt="Restored home for a widow-headed household" loading="lazy">
+          <figcaption class="gallery-item-caption">A restored home</figcaption>
+        </figure>
+
+        <figure class="gallery-item" style="aspect-ratio:5/7;">
+          <img src="static/images/gallery-5.jpg" alt="Community gathering at a ward-level hub" loading="lazy">
+          <figcaption class="gallery-item-caption">Community gathering</figcaption>
+        </figure>
+
+        <figure class="gallery-item" style="aspect-ratio:1/1;">
+          <img src="static/images/gallery-6.jpg" alt="Founder meeting community members in the field" loading="lazy">
+          <figcaption class="gallery-item-caption">In the field with the community</figcaption>
+        </figure>
+
+        <figure class="gallery-item" style="aspect-ratio:4/5;">
+          <img src="static/images/gallery-7.jpg" alt="Avocado seedling distribution to women's groups" loading="lazy">
+          <figcaption class="gallery-item-caption">Avocado seedling distribution</figcaption>
+        </figure>
+
+        <figure class="gallery-item" style="aspect-ratio:3/4;">
+          <img src="static/images/gallery-8.jpg" alt="Solar technician training for women and youth" loading="lazy">
+          <figcaption class="gallery-item-caption">Solar technician training</figcaption>
+        </figure>
+
+        <figure class="gallery-item" style="aspect-ratio:1/1;">
+          <img src="static/images/gallery-9.jpg" alt="Dairy cow handover to a household led by a person with a disability" loading="lazy">
+          <figcaption class="gallery-item-caption">Dairy cow handover</figcaption>
+        </figure>
+
+        <figure class="gallery-item" style="aspect-ratio:5/6;">
+          <img src="static/images/gallery-10.jpg" alt="Bursary award ceremony for students" loading="lazy">
+          <figcaption class="gallery-item-caption">Bursary award ceremony</figcaption>
+        </figure>
+
+        <figure class="gallery-item" style="aspect-ratio:4/5;">
+          <img src="static/images/gallery-11.jpg" alt="Tree nursery run by youth" loading="lazy">
+          <figcaption class="gallery-item-caption">Youth-run tree nursery</figcaption>
+        </figure>
+
+        <figure class="gallery-item" style="aspect-ratio:3/4;">
+          <img src="static/images/gallery-12.jpg" alt="Community mobilisation against illicit brews and drug peddling" loading="lazy">
+          <figcaption class="gallery-item-caption">Community mobilisation</figcaption>
+        </figure>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ CTA BAND ============ -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <div>
+          <h2>See something worth supporting?</h2>
+          <p>Every image here represents a household, a programme, or a turning point.
+             Your contribution keeps the work moving.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn--yellow" href="get-involved.html#donate">Donate</a>
+          <a class="btn btn--outline" href="get-involved.html">Get Involved</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="wrap">
+
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img class="brand-logo" src="static/images/logo.png" alt="Tecla Tum Foundation logo">
+        <span class="brand-text">
+          <span class="brand-name">Tecla Tum Foundation</span>
+          <span class="brand-sub">Lifting the Vulnerable</span>
+        </span>
+        <p>An independent, non-partisan Public Benefit Organisation serving women, widows, youth, and persons with disabilities.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="programmes.html">Programmes</a></li>
+          <li><a href="impact.html">Track Record</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Act</h4>
+        <ul>
+          <li><a href="get-involved.html#donate">Donate</a></li>
+          <li><a href="get-involved.html#partner">Partner</a></li>
+          <li><a href="get-involved.html#volunteer">Volunteer</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Head Office</h4>
+        <p>Kapsabet, Nandi County<br>P.O. Box 4777, Eldoret, Kenya</p>
+        <p style="margin-top:.8rem;">
+          <a href="contact.html" style="color:var(--yellow);font-weight:600;">Contact us →</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="footer-bar">
+      <span>© <span id="year">2026</span> Tecla Tum Foundation. All rights reserved.</span>
+      <span class="legal">
+        <a href="contact.html">Safeguarding Policy</a>
+        <a href="contact.html">Financial Transparency</a>
+      </span>
+    </div>
+
+  </div>
+</footer>
+
+<script src="js/script.js"></script>
+
+<!-- ============ LIGHTBOX ============ -->
+<script>
+(function () {
+  'use strict';
+
+  var items = Array.prototype.slice.call(document.querySelectorAll('.gallery-item img'));
+  if (!items.length) return;
+
+  /* Build lightbox once */
+  var lb = document.createElement('div');
+  lb.className = 'lightbox';
+  lb.setAttribute('role', 'dialog');
+  lb.setAttribute('aria-modal', 'true');
+  lb.setAttribute('aria-label', 'Image viewer');
+  lb.innerHTML =
+    '<button class="lightbox-btn lightbox-close" type="button" aria-label="Close viewer">&times;</button>' +
+    '<button class="lightbox-btn lightbox-prev" type="button" aria-label="Previous image">&lsaquo;</button>' +
+    '<button class="lightbox-btn lightbox-next" type="button" aria-label="Next image">&rsaquo;</button>' +
+    '<figure class="lightbox-figure">' +
+      '<img class="lightbox-img" alt="">' +
+      '<figcaption class="lightbox-caption"></figcaption>' +
+    '</figure>';
+  document.body.appendChild(lb);
+
+  var lbImg = lb.querySelector('.lightbox-img');
+  var lbCap = lb.querySelector('.lightbox-caption');
+  var btnClose = lb.querySelector('.lightbox-close');
+  var btnPrev = lb.querySelector('.lightbox-prev');
+  var btnNext = lb.querySelector('.lightbox-next');
+  var current = 0;
+
+  function show(i) {
+    current = (i + items.length) % items.length;
+    var src = items[current];
+    lbImg.src = src.currentSrc || src.src;
+    lbImg.alt = src.alt || '';
+    lbCap.textContent = src.alt || '';
+    lbCap.style.display = src.alt ? 'block' : 'none';
+  }
+
+  function open(i) {
+    show(i);
+    lb.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    btnClose.focus();
+  }
+
+  function close() {
+    lb.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  items.forEach(function (img, i) {
+    var wrapper = img.closest('.gallery-item');
+    if (!wrapper) return;
+    wrapper.setAttribute('role', 'button');
+    wrapper.setAttribute('tabindex', '0');
+    wrapper.addEventListener('click', function () { open(i); });
+    wrapper.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open(i);
+      }
+    });
+  });
+
+  btnClose.addEventListener('click', close);
+  btnPrev.addEventListener('click', function (e) { e.stopPropagation(); show(current - 1); });
+  btnNext.addEventListener('click', function (e) { e.stopPropagation(); show(current + 1); });
+
+  lb.addEventListener('click', function (e) {
+    if (e.target === lb) close();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (!lb.classList.contains('is-open')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') show(current - 1);
+    if (e.key === 'ArrowRight') show(current + 1);
+  });
+})();
+</script>
+
+</body>
+</html>
