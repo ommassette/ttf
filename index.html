@@ -9,9 +9,66 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="css/style.css">
+<!-- Loader styles last so they win -->
+<link rel="stylesheet" href="css/loader.css">
+
+<!-- Critical: lock scroll + paint the white loader before CSS arrives -->
+<style>
+  html.is-loading, html.is-loading body { overflow: hidden; }
+  #pageLoader{ position:fixed; inset:0; z-index:9999; display:grid; place-items:center; background:#fff; }
+</style>
+<script>
+  /* Runs before paint. Safety net releases the page even if loader.js never loads. */
+  document.documentElement.classList.add('is-loading');
+  window.setTimeout(function () {
+    document.documentElement.classList.remove('is-loading');
+    var l = document.getElementById('pageLoader');
+    if (l) {
+      l.classList.add('is-done');
+      window.setTimeout(function () { if (l.parentNode) l.parentNode.removeChild(l); }, 700);
+    }
+  }, 8000);
+</script>
 </head>
+
 <body>
+
+<!-- ============ PAGE LOADER ============ -->
+<div class="page-loader" id="pageLoader"
+     role="progressbar" aria-label="Loading Dr. Tecla Tum Foundation"
+     aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+
+  <div class="loader-inner">
+
+    <div class="loader-stage">
+      <span class="loader-halo" aria-hidden="true"></span>
+      <span class="loader-ring" aria-hidden="true"></span>
+      <span class="loader-ring loader-ring--2" aria-hidden="true"></span>
+
+      <span class="loader-badge">
+        <span class="loader-sheen" aria-hidden="true"></span>
+        <img class="loader-logo" src="static/images/logo.png" alt="">
+      </span>
+    </div>
+
+    <p class="loader-text">Dr.&nbsp;Tecla Tum Foundation</p>
+
+    <div class="loader-bar" aria-hidden="true">
+      <span class="loader-bar-fill" id="loaderBarFill"></span>
+    </div>
+    <span class="loader-count" id="loaderCount" aria-hidden="true">0%</span>
+
+  </div>
+</div>
+
+<noscript>
+  <style>
+    #pageLoader { display: none !important; }
+    html.is-loading, html.is-loading body { overflow: auto !important; }
+  </style>
+</noscript>
 
 <!-- ============ HEADER ============ -->
 <header class="site-header" id="siteHeader">
@@ -293,6 +350,7 @@
   </div>
 </footer>
 
+<script src="js/loader.js"></script>
 <script src="js/script.js"></script>
 </body>
 </html>
